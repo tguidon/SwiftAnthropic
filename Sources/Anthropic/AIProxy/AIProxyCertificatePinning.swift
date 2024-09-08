@@ -6,10 +6,14 @@
 //
 
 import Foundation
+#if canImport(OSLog)
 import OSLog
+#endif
 
+#if canImport(OSLog)
 private let aiproxyLogger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "UnknownApp",
                                    category: "SwiftAnthropic+AIProxyCertificatePinning")
+#endif
 
 /// ## About
 /// Use this class in conjunction with a URLSession to adopt certificate pinning in your app.
@@ -74,12 +78,16 @@ final class AIProxyCertificatePinningDelegate: NSObject, URLSessionDelegate, URL
       _ challenge: URLAuthenticationChallenge
    ) -> (URLSession.AuthChallengeDisposition, URLCredential?) {
       guard let secTrust = challenge.protectionSpace.serverTrust else {
+         #if canImport(OSLog)
          aiproxyLogger.error("Could not access the server's security space")
+         #endif
          return (.cancelAuthenticationChallenge, nil)
       }
 
       guard let certificate = getServerCert(secTrust: secTrust) else {
+         #if canImport(OSLog)
          aiproxyLogger.error("Could not access the server's TLS cert")
+         #endif
          return (.cancelAuthenticationChallenge, nil)
       }
 
